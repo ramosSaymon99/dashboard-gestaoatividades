@@ -1,0 +1,80 @@
+/**
+ * Worker de persistência para o Painel de Gestão de Atividades — CIM Autoglass.
+ *
+ * Expõe uma API tipo "key-value" simples, compatível com o adaptador
+ * storageGet/storageSet do painel HTML:
+ *
+ *   GET    /kv/:key            -> { key, value }  (404 se não existir)
+ *   PUT    /kv/:key            -> body: { value }  -> upsert -> { key, value }
+ *   DELETE /kv/:key            -> { key, deleted: true }
+ *
+ * Requer um banco D1 vinculado com o binding "DB" (ver wrangler.toml e schema.sql).
+ */
+
+const ALLOWED_ORIGIN = '*'; // troque pelo domínio do seu Cloudflare Pages em produção, ex: 'https://gestao-atividades.pages.dev'
+
+function corsHeaders() {
+  return {
+    'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
+    'Access-Control-Allow-Methods': 'GET, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  };
+}
+
+function json(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...corsHeaders() },
+  });
+}
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+
+    if (request.method === 'OPTIONS') {
+      return new Response(null, { headers: corsHeaders() });
+    }
+
+    const match = url.pathname.match(/^\/kv\/([^/]+)$/);
+    if (!match) {
+      return json({ error: 'Rota não encontrada. Use /kv/:key' }, 404);
+    }
+    const key = decodeURIComponent(match[1]);
+
+    try {
+      if (request.method === 'GET') {
+        const row = await env.DB
+          .prepare('SELECT value FROM kv_store WHERE key = ?')
+          .bind(key)
+          .first();
+        if (!row) return json({ error: 'not found' }, 404);
+        return json({ key, value: row.value });
+      }
+
+      if (request.method === 'PUT') {
+        const body = await request.json();
+        if (typeof body.value !== 'string') {
+          return json({ error: '"value" precisa ser uma string (use JSON.stringify no cliente)' }, 400);
+        }
+        await env.DB
+          .prepare(
+            `INSERT INTO kv_store (key, value, updated_at) VALUES (?, ?, datetime('now'))
+             ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at`
+          )
+          .bind(key, body.value)
+          .run();
+        return json({ key, value: body.value });
+      }
+
+      if (request.method === 'DELETE') {
+        await env.DB.prepare('DELETE FROM kv_store WHERE key = ?').bind(key).run();
+        return json({ key, deleted: true });
+      }
+
+      return json({ error: 'Método não suportado' }, 405);
+    } catch (err) {
+      return json({ error: String(err) }, 500);
+    }
+  },
+};
