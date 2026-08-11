@@ -1043,9 +1043,49 @@ let selectedImpact = 'Pendente';
 
 const STORAGE_KEY = 'activities_v1';
 
+// ---------- Adaptador de armazenamento (Claude.ai OU Cloudflare Worker+D1) ----------
+// Dentro do Claude.ai, window.storage já existe e é usado direto.
+// Publicado fora (Cloudflare Pages, etc.), preencha REMOTE_API_BASE com a URL
+// do seu Worker (ex.: 'https://gestao-atividades-api.SEU-SUBDOMINIO.workers.dev')
+// depois de seguir o guia de deploy do Worker. Enquanto estiver vazio, o painel
+// roda em modo local (dados não persistem fora do Claude.ai).
+const REMOTE_API_BASE = 'https://gestao-atividades.tinico85.workers.dev';
+
+const hasClaudeStorage = (typeof window !== 'undefined' && window.storage && typeof window.storage.get === 'function');
+const hasRemoteStorage = !!REMOTE_API_BASE;
+
+async function storageGet(key){
+  if(hasClaudeStorage){
+    return await window.storage.get(key);
+  }
+  if(hasRemoteStorage){
+    const res = await fetch(`${REMOTE_API_BASE}/kv/${encodeURIComponent(key)}`);
+    if(res.status === 404) return null;
+    if(!res.ok) throw new Error('Falha ao ler dados remotos (status ' + res.status + ')');
+    return await res.json(); // { key, value }
+  }
+  throw new Error('Nenhum backend de armazenamento configurado');
+}
+
+async function storageSet(key, value){
+  if(hasClaudeStorage){
+    return await window.storage.set(key, value);
+  }
+  if(hasRemoteStorage){
+    const res = await fetch(`${REMOTE_API_BASE}/kv/${encodeURIComponent(key)}`, {
+      method: 'PUT',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({value})
+    });
+    if(!res.ok) throw new Error('Falha ao salvar dados remotos (status ' + res.status + ')');
+    return await res.json();
+  }
+  throw new Error('Nenhum backend de armazenamento configurado');
+}
+
 async function loadData(){
   try{
-    const res = await window.storage.get(STORAGE_KEY);
+    const res = await storageGet(STORAGE_KEY);
     if(res && res.value){
       activities = JSON.parse(res.value);
     } else {
@@ -1053,7 +1093,11 @@ async function loadData(){
       await saveData();
     }
   }catch(e){
+    console.error('Falha ao carregar dados, usando dados de exemplo locais', e);
     activities = seedData();
+    if(!hasClaudeStorage && !hasRemoteStorage){
+      showToast('Armazenamento não configurado — os dados não vão persistir. Veja REMOTE_API_BASE no código.');
+    }
   }
   populateCategoryFilter();
   render();
@@ -1061,7 +1105,7 @@ async function loadData(){
 
 async function saveData(){
   try{
-    await window.storage.set(STORAGE_KEY, JSON.stringify(activities));
+    await storageSet(STORAGE_KEY, JSON.stringify(activities));
   }catch(e){
     console.error('Falha ao salvar', e);
     showToast('Não foi possível salvar. Tente novamente.');
@@ -1869,7 +1913,7 @@ async function generateAiInsight(){
     document.getElementById('aiResultText').textContent = text;
 
     try{
-      await window.storage.set('last_ai_insight', JSON.stringify({text, at: new Date().toISOString()}));
+      await storageSet('last_ai_insight', JSON.stringify({text, at: new Date().toISOString()}));
     }catch(e){ /* opcional, não bloqueia a UX */ }
 
   }catch(err){
@@ -1886,7 +1930,7 @@ document.getElementById('btnAiInsight').addEventListener('click', generateAiInsi
 
 async function restoreLastAiInsight(){
   try{
-    const res = await window.storage.get('last_ai_insight');
+    const res = await storageGet('last_ai_insight');
     if(res && res.value){
       const saved = JSON.parse(res.value);
       const body = document.getElementById('aiBody');
