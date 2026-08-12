@@ -168,6 +168,7 @@
   .section-block.entering{animation:fadeSlideUp .45s cubic-bezier(.22,1,.36,1) both;}
   .section-head{
     display:flex;align-items:baseline;gap:10px;margin-bottom:16px;
+    position:relative;
   }
   .section-head .idx{
     font-family:'Poppins',sans-serif;font-weight:700;font-size:13px;
@@ -182,12 +183,6 @@
     color:rgba(9,101,254,0.055);
     z-index:0;pointer-events:none;user-select:none;
     letter-spacing:-.02em;
-  }
-
-  /* ---------- Ghost numeral (signature) ---------- */
-  .section-head{
-    display:flex;align-items:baseline;gap:10px;margin-bottom:18px;
-    position:relative;
   }
 
   /* ---------- Bento grid ---------- */
@@ -440,74 +435,6 @@
   .panel h3{font-size:14px;margin:0 0 14px;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .panel h3 .para{width:8px;height:8px;background:var(--blue);display:inline-block;transform:skewX(-18deg);}
 
-  /* ---------- AI Insight panel ---------- */
-  .ai-panel{
-    position:relative;
-    background:linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
-    border:none;
-    overflow:hidden;
-  }
-  .ai-panel::after{
-    content:"";
-    position:absolute;
-    right:-50px; top:-50px;
-    width:220px; height:220px;
-    background:rgba(255,255,255,0.07);
-    transform:skewX(-18deg);
-    pointer-events:none;
-    animation:floatBlob 10s ease-in-out infinite;
-  }
-  .ai-panel::before{
-    content:"";
-    position:absolute;
-    left:-30px; bottom:-50px;
-    width:140px; height:140px;
-    background:rgba(255,255,255,0.05);
-    border-radius:50%;
-    pointer-events:none;
-  }
-  .ai-head{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;position:relative;z-index:1;}
-  .ai-head-left{display:flex;align-items:center;gap:12px;}
-  .ai-icon{
-    width:38px;height:38px;border-radius:10px;flex-shrink:0;
-    background:rgba(255,255,255,0.16);
-    display:flex;align-items:center;justify-content:center;color:#fff;
-    animation:spin18 6s linear infinite;
-  }
-  .ai-icon svg{width:19px;height:19px;}
-  @keyframes spin18{
-    0%,85%{transform:rotate(0deg);}
-    92%{transform:rotate(90deg);}
-    100%{transform:rotate(90deg);}
-  }
-  .ai-head h3{font-size:14.5px;color:#fff;}
-  .ai-sub{margin:2px 0 0;font-size:12px;color:rgba(255,255,255,0.75);}
-  .btn-ai{
-    background:#fff;
-    color:var(--navy);display:flex;align-items:center;gap:8px;
-    box-shadow:0 4px 14px rgba(0,0,0,0.2);
-  }
-  .btn-ai svg{width:15px;height:15px;}
-  .btn-ai:hover{box-shadow:0 6px 18px rgba(0,0,0,0.28);transform:translateY(-1px);background:#fff;}
-  .btn-ai:disabled{opacity:.65;cursor:not-allowed;transform:none;}
-  .btn-ai.loading svg{animation:spinFast .9s linear infinite;}
-  @keyframes spinFast{to{transform:rotate(360deg);}}
-
-  .ai-body{margin-top:14px;position:relative;z-index:1;}
-  .ai-empty{font-size:12.5px;color:rgba(255,255,255,0.8);line-height:1.6;}
-  .ai-skeleton{display:flex;flex-direction:column;gap:8px;}
-  .ai-skeleton .sk-line{height:11px;border-radius:6px;background:linear-gradient(90deg, rgba(255,255,255,0.12) 25%, rgba(255,255,255,0.28) 37%, rgba(255,255,255,0.12) 63%);background-size:400% 100%;animation:shimmer 1.4s ease-in-out infinite;}
-  @keyframes shimmer{0%{background-position:100% 50%;}100%{background-position:0 50%;}}
-  .ai-result{
-    font-size:13px;line-height:1.7;color:#fff;
-    animation:fadeSlideUp .4s cubic-bezier(.22,1,.36,1) both;
-    white-space:pre-wrap;
-  }
-  .ai-result strong{color:#fff;}
-  .ai-error{font-size:12.5px;color:#fff;background:rgba(255,255,255,0.14);padding:10px 12px;border-radius:9px;}
-  .ai-meta{font-size:10.5px;color:rgba(255,255,255,0.7);margin-top:10px;display:flex;align-items:center;gap:6px;}
-  .ai-meta .ai-badge{background:rgba(255,255,255,0.18);color:#fff;padding:2px 7px;border-radius:5px;font-weight:700;letter-spacing:.02em;}
-
   /* ---------- Timeline ---------- */
   .timeline-panel{margin-top:14px;}
   .timeline-head{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:10px;margin-bottom:6px;}
@@ -737,7 +664,7 @@
 <div class="topbar">
   <div class="topbar-inner">
     <div>
-      <div class="eyebrow"><span class="para"></span> Marketing · Grupo Autoglass</div>
+      <div class="eyebrow"><span class="para"></span> MARKETING · Grupo Autoglass</div>
       <h1>Gestão de Atividades &amp; Impacto</h1>
       <p>Registre ações e o efeito real que elas geraram no resultado — positivo, negativo ou ainda em aberto.</p>
     </div>
@@ -786,34 +713,11 @@
       </div>
     </div>
 
-    <!-- Análise com IA -->
-    <div class="panel ai-panel" style="margin-bottom:22px;">
-      <div class="ai-head">
-        <div class="ai-head-left">
-          <div class="ai-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg>
-          </div>
-          <div>
-            <h3 style="margin:0;">Análise executiva com IA</h3>
-            <p class="ai-sub">Leitura automática dos dados atuais — riscos, destaques e uma recomendação prática.</p>
-          </div>
-        </div>
-        <button class="btn btn-ai" id="btnAiInsight">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.3L19 10l-5.1 1.7L12 17l-1.9-5.3L5 10l5.1-1.7L12 3z"/></svg>
-          <span id="btnAiLabel">Gerar análise</span>
-        </button>
-      </div>
-      <div class="ai-body" id="aiBody">
-        <div class="ai-empty" id="aiEmpty">Clique em "Gerar análise" para uma leitura executiva instantânea, escrita a partir dos dados registrados no painel.</div>
-      </div>
-    </div>
-
     <!-- Comparativo de período — sugestão do Claude -->
     <div class="panel compare-panel" style="margin-bottom:22px;">
       <div class="compare-head">
         <h3 style="margin:0;display:flex;align-items:center;flex-wrap:wrap;gap:2px;">
           <span class="para"></span>Comparativo de período
-          <span class="signature-tag">sugestão do Claude</span>
         </h3>
         <div class="compare-toggle" id="compareToggle">
           <button class="active" data-days="7">7 dias</button>
@@ -1049,7 +953,7 @@ const STORAGE_KEY = 'activities_v1';
 // do seu Worker (ex.: 'https://gestao-atividades-api.SEU-SUBDOMINIO.workers.dev')
 // depois de seguir o guia de deploy do Worker. Enquanto estiver vazio, o painel
 // roda em modo local (dados não persistem fora do Claude.ai).
-const REMOTE_API_BASE = 'https://aged-credit-5081.tinico85.workers.dev';
+const REMOTE_API_BASE = 'https://gestao-atividades.tinico85.workers.dev';
 
 const hasClaudeStorage = (typeof window !== 'undefined' && window.storage && typeof window.storage.get === 'function');
 const hasRemoteStorage = !!REMOTE_API_BASE;
@@ -1710,12 +1614,55 @@ document.getElementById('btnSave').onclick = async () => {
     activities.push({id: crypto.randomUUID(), ...payload});
     showToast('Atividade registrada.');
   }
+
+  if(selectedImpact === 'Positivo'){
+    celebrate(document.getElementById('btnSave'));
+  }
+
   await saveData();
   populateCategoryFilter();
   render();
   closeModal();
   document.querySelector('.section-nav button[data-target="section-acoes"]').click();
 };
+
+// ---------- Celebração visual (confete) ao registrar um impacto positivo ----------
+function celebrate(originEl){
+  const rect = originEl.getBoundingClientRect();
+  const originX = rect.left + rect.width/2;
+  const originY = rect.top + rect.height/2;
+  const colors = ['#4ADE80', '#0965FE', '#F2C879', '#ffffff', '#0E9F6E'];
+  const count = 32;
+
+  for(let i=0; i<count; i++){
+    const piece = document.createElement('div');
+    const size = 5 + Math.random()*6;
+    const color = colors[Math.floor(Math.random()*colors.length)];
+    piece.style.cssText = `
+      position:fixed; left:${originX}px; top:${originY}px;
+      width:${size}px; height:${size}px; background:${color};
+      border-radius:${Math.random()>0.5 ? '50%' : '2px'};
+      pointer-events:none; z-index:9999; opacity:1;
+      box-shadow:0 0 4px rgba(0,0,0,0.15);
+    `;
+    document.body.appendChild(piece);
+
+    const angle = Math.random()*Math.PI*2;
+    const distance = 90 + Math.random()*170;
+    const dx = Math.cos(angle)*distance;
+    const dy = Math.sin(angle)*distance - 60;
+    const rotate = Math.random()*720 - 360;
+    const duration = 0.75 + Math.random()*0.5;
+
+    requestAnimationFrame(()=>{
+      piece.style.transition = `transform ${duration}s cubic-bezier(.22,1,.36,1), opacity ${duration+0.2}s ease`;
+      piece.style.transform = `translate(${dx}px, ${dy}px) rotate(${rotate}deg)`;
+      piece.style.opacity = '0';
+    });
+
+    setTimeout(()=> piece.remove(), (duration+0.3)*1000);
+  }
+}
 
 window.deleteActivity = async (id) => {
   if(!confirm('Excluir esta atividade? Essa ação não pode ser desfeita.')) return;
@@ -1819,131 +1766,7 @@ window.addEventListener('resize', ()=>{
   if(active) positionIndicator(active);
 });
 
-// ---------- AI Insight (Claude API) ----------
-function buildAnalyticsSnapshot(){
-  const total = activities.length;
-  const pos = activities.filter(a=>a.impacto==='Positivo').length;
-  const neg = activities.filter(a=>a.impacto==='Negativo').length;
-  const neu = activities.filter(a=>a.impacto==='Neutro').length;
-  const pend = activities.filter(a=>a.impacto==='Pendente').length;
-  const avaliadas = pos+neg;
-  const rate = avaliadas ? Math.round((pos/avaliadas)*100) : null;
-  const score = pos-neg;
-
-  const cats = {};
-  activities.forEach(a=>{
-    const c = a.categoria || 'Sem categoria';
-    if(!cats[c]) cats[c] = {pos:0, neg:0, neu:0, pend:0, total:0};
-    cats[c].total++;
-    if(a.impacto==='Positivo') cats[c].pos++;
-    else if(a.impacto==='Negativo') cats[c].neg++;
-    else if(a.impacto==='Neutro') cats[c].neu++;
-    else cats[c].pend++;
-  });
-  const catLines = Object.entries(cats)
-    .sort((a,b)=>b[1].total-a[1].total)
-    .map(([name,v])=> `- ${name}: ${v.total} ações (pos ${v.pos}, neg ${v.neg}, neu ${v.neu}, pend ${v.pend})`)
-    .join('\n');
-
-  const recent = [...activities]
-    .filter(a=>a.data)
-    .sort((a,b)=> b.data.localeCompare(a.data))
-    .slice(0,8)
-    .map(a=> `- [${a.data}] (${a.impacto}) ${a.titulo}${a.resultado ? ' — resultado: '+a.resultado : ''}`)
-    .join('\n');
-
-  return `Painel de gestão de atividades e impacto — Grupo Autoglass (CIM).
-Métricas gerais: total ${total} ações | positivas ${pos} | negativas ${neg} | neutras ${neu} | pendentes ${pend} | score líquido ${score} | taxa de sucesso ${rate===null?'sem dados suficientes':rate+'%'}.
-
-Detalhamento por categoria:
-${catLines || '(sem categorias registradas)'}
-
-Ações mais recentes:
-${recent || '(sem datas registradas)'}`;
-}
-
-async function generateAiInsight(){
-  const btn = document.getElementById('btnAiInsight');
-  const label = document.getElementById('btnAiLabel');
-  const body = document.getElementById('aiBody');
-
-  btn.disabled = true;
-  btn.classList.add('loading');
-  label.textContent = 'Analisando...';
-  body.innerHTML = `<div class="ai-skeleton">
-    <div class="sk-line" style="width:92%"></div>
-    <div class="sk-line" style="width:78%"></div>
-    <div class="sk-line" style="width:85%"></div>
-    <div class="sk-line" style="width:60%"></div>
-  </div>`;
-
-  const snapshot = buildAnalyticsSnapshot();
-
-  try{
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 700,
-        system: 'Você é um analista de dados sênior do time de CIM (Customer Intelligence & Marketing) da Grupo Autoglass. Escreva em português do Brasil, direto e sem enrolação. Estruture a resposta em: 1) um parágrafo curto de leitura geral, 2) uma linha "Ponto de atenção:" citando o maior risco com números, 3) uma linha "Destaque:" citando o melhor resultado com números, 4) uma linha "Próxima ação recomendada:" com uma recomendação prática e específica. Use apenas os dados fornecidos, nunca invente números. Máximo de 130 palavras.',
-        messages: [
-          {role:'user', content: `Analise este snapshot do painel e escreva a leitura executiva:\n\n${snapshot}`}
-        ]
-      })
-    });
-
-    if(!response.ok){
-      throw new Error('status ' + response.status);
-    }
-
-    const data = await response.json();
-    const text = (data.content || [])
-      .filter(b => b.type === 'text')
-      .map(b => b.text)
-      .join('\n')
-      .trim();
-
-    if(!text){
-      throw new Error('resposta vazia');
-    }
-
-    body.innerHTML = `<div class="ai-result" id="aiResultText"></div>
-      <div class="ai-meta"><span class="ai-badge">IA</span> Gerado agora a partir dos dados atuais do painel — não substitui sua análise crítica.</div>`;
-    document.getElementById('aiResultText').textContent = text;
-
-    try{
-      await storageSet('last_ai_insight', JSON.stringify({text, at: new Date().toISOString()}));
-    }catch(e){ /* opcional, não bloqueia a UX */ }
-
-  }catch(err){
-    console.error('Falha ao gerar análise de IA', err);
-    body.innerHTML = `<div class="ai-error">Não foi possível gerar a análise agora. Tente novamente em alguns instantes.</div>`;
-  } finally {
-    btn.disabled = false;
-    btn.classList.remove('loading');
-    label.textContent = 'Gerar análise';
-  }
-}
-
-document.getElementById('btnAiInsight').addEventListener('click', generateAiInsight);
-
-async function restoreLastAiInsight(){
-  try{
-    const res = await storageGet('last_ai_insight');
-    if(res && res.value){
-      const saved = JSON.parse(res.value);
-      const body = document.getElementById('aiBody');
-      const when = new Date(saved.at).toLocaleString('pt-BR');
-      body.innerHTML = `<div class="ai-result" id="aiResultText"></div>
-        <div class="ai-meta"><span class="ai-badge">IA</span> Última análise gerada em ${when}. Clique em "Gerar análise" para atualizar.</div>`;
-      document.getElementById('aiResultText').textContent = saved.text;
-    }
-  }catch(e){ /* sem análise salva ainda */ }
-}
-
 loadData();
-restoreLastAiInsight();
 requestAnimationFrame(()=> positionIndicator(document.querySelector('.section-nav button.active')));
 </script>
 </body>
